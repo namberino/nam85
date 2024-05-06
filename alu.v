@@ -1,15 +1,15 @@
 module alu(
     input clk,
     input rst,
-    input[4:0] opcode;
-    input[7:0] data_in;
-    input ctrl_sig;
-    input acc_write_en;
-    input act_store;
-    input act_restore;
-    input tmp_write_en;
-    input flags_write_en;
-    output[7:0] flags_out;
+    input[4:0] opcode,
+    input[7:0] data_in,
+    input ctrl_sig,
+    input acc_write_en,
+    input act_store,
+    input act_restore,
+    input tmp_write_en,
+    input flags_write_en,
+    output[7:0] flags_out,
     output[7:0] out
 );
 

@@ -1,8 +1,16 @@
-module top_design(
-    input clk
-);
+module top_design_tb();
 
-    wire rst; // reset signal
+    // reg clk = 0;
+    // integer i;
+    // initial begin
+    //     for (i = 0; i < 8096; i++)
+    //         #1 clk = ~clk;
+    // end
+    reg clk = 0;
+    always #1 clk = ~clk;
+
+    reg rst; // reset signal
+    integer i;
 
     // display alu result
     reg[7:0] data_out;
@@ -137,5 +145,23 @@ module top_design(
             display
         })
     );
+
+    initial begin
+        // pulse reset signal
+        rst = 1;
+        #1
+        rst = 0;
+
+        $dumpfile("top_design_tb.vcd");
+        $dumpvars(0, top_design_tb);
+
+        // dump registers data
+        for (i = 0; i < 12; i++)
+            $dumpvars(0, regfile.register[i]);
+
+        // dump data of first 256 bytes
+        for (i = 0; i < 256; i++)
+            $dumpvars(0, memory.mem[i]);
+    end
 
 endmodule
