@@ -904,9 +904,198 @@ module controller(
                     end
                 end
 
+                // opcode[2:0] = 001 -> POP, opcode[2:0] = 101 -> PUSH
+                // PUSH Rx (Rx = opcode[5:4])
+                // PSW: Push Status Word (flags and ACC)
+                8'o305, 8'o325, 8'o345, 8'o365:
+                begin
+                    if (stage == 3)
+                    begin
+                        ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_SP;
+                        ctrl_word[REG_EXT_BIT_1:REG_EXT_BIT_0] = REG_EXT_DCR;
+                    end else if (stage == 4)
+                    begin
+                        ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_SP;
+                        ctrl_word[REG_OUT_EN] = 1'b1;
+                        ctrl_word[MEM_MAR_WRITE_EN] = 1'b1;
+                    end else if (stage == 5)
+                    begin
+                        if (opcode[5:4] == 2'b11) // if PSW
+                            ctrl_word[ALU_OUT_EN] = 1'b1
+                        else
+                        begin
+                            ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = {2'b0, opcode[5:4], 1'b0};
+                            ctrl_word[REG_OUT_EN] = 1'b1;
+                        end
+
+                        ctrl_word[MEM_WRITE_EN] = 1'b1;
+                    end else if (stage == 6)
+                    begin
+                        ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_SP;
+                        ctrl_word[REG_EXT_BIT_1:REG_EXT_BIT_0] = REG_EXT_DCR;
+                    end else if (stage == 7)
+                    begin
+                        ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_SP;
+                        ctrl_word[REG_OUT_EN] = 1'b1;
+                        ctrl_word[MEM_MAR_WRITE_EN] = 1'b1;
+                    end else if (stage == 8)
+                    begin
+                        if (opcode[5:4] == 2'b11) // if PSW
+                            ctrl_word[ALU_FLAGS_OUT_EN] = 1'b1
+                        else
+                        begin
+                            ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = {2'b0, opcode[5:4], 1'b1};
+                            ctrl_word[REG_OUT_EN] = 1'b1;
+                        end
+
+                        ctrl_word[MEM_WRITE_EN] = 1'b1;
+                        stage_rst = 1'b1;
+                    end
+                end
+
+                // POP Rx (Rx = opcode[5:4])
+                // PSW: Pop Status Word (flags and ACC)
+                8'o301, 8'o321, 8'o341, 8'o361:
+                begin
+                    if (stage == 3)
+                    begin
+                        ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_SP;
+                        ctrl_word[REG_OUT_EN] = 1'b1;
+                        ctrl_word[MEM_MAR_WRITE_EN] = 1'b1;
+                    end else if (stage == 4)
+                    begin
+                        if (opcode[5:4] == 2'b11) // if PSW
+                            ctrl_word[ALU_FLAGS_WRITE_EN] = 1'b1
+                        else
+                        begin
+                            ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = {2'b0, opcode[5:4], 1'b1};
+                            ctrl_word[REG_WRITE_EN] = 1'b1;
+                        end
+
+                        ctrl_word[MEM_OUT_EN] = 1'b1;
+                    end else if (stage == 5)
+                    begin
+                        ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_SP;
+                        ctrl_word[REG_EXT_BIT_1:REG_EXT_BIT_0] = REG_EXT_INC;
+                    end else if (stage == 6)
+                    begin
+                        ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_SP;
+                        ctrl_word[REG_OUT_EN] = 1'b1;
+                        ctrl_word[MEM_MAR_WRITE_EN] = 1'b1;
+                    end else if (stage == 7)
+                    begin
+                        if (opcode[5:4] == 2'b11) // if PSW
+                            ctrl_word[ALU_ACC_WRITE_EN] = 1'b1
+                        else
+                        begin
+                            ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = {2'b0, opcode[5:4], 1'b0};
+                            ctrl_word[REG_WRITE_EN] = 1'b1;
+                        end
+                        
+                        ctrl_word[MEM_OUT_EN] = 1'b1;
+                    end else if (stage == 8)
+                    begin
+                        ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_SP;
+                        ctrl_word[REG_EXT_BIT_1:REG_EXT_BIT_0] = REG_EXT_INC;
+                        stage_rst;
+                    end
+                end
+
+                // SHLD / LHLD a16 (opcode[3] = 0 -> SHLD, opcode[3] = 1 -> LHLD)
+                8'o042, 8'o052:
+                begin
+                    if (stage == 3)
+                    begin
+                        ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_PC;
+                        ctrl_word[REG_OUT_EN] = 1'b1;
+                        ctrl_word[MEM_MAR_WRITE_EN] = 1'b1;
+                    end else if (stage == 4)
+                    begin
+                        ctrl_word[REG_READ_WRITE_BIT_4:REG_WRITE_SEL_BIT_0] = REG_Z;
+                        ctrl_word[MEM_OUT_EN] = 1'b1;
+                        ctrl_word[REG_WRITE_EN] = 1'b1;
+                    end else if (stage == 5)
+                    begin
+                        ctrl_word[REG_READ_WRITE_BIT_4:REG_WRITE_SEL_BIT_0] = REG_PC;
+                        ctrl_word[REG_EXT_BIT_1:REG_EXT_BIT_0] = REG_EXT_INC;
+                    end else if (stage == 6)
+                    begin
+                        ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_PC;
+                        ctrl_word[REG_OUT_EN] = 1'b1;
+                        ctrl_word[MEM_MAR_WRITE_EN] = 1'b1;
+                    end else if (stage == 7)
+                    begin
+                        ctrl_word[REG_READ_WRITE_BIT_4:REG_WRITE_SEL_BIT_0] = REG_W;
+                        ctrl_word[MEM_OUT_EN] = 1'b1;
+                        ctrl_word[REG_WRITE_EN] = 1'b1;
+                    end else if (stage == 8)
+                    begin
+                        ctrl_word[REG_READ_WRITE_BIT_4:REG_WRITE_SEL_BIT_0] = REG_PC;
+                        ctrl_word[REG_EXT_BIT_1:REG_EXT_BIT_0] = REG_EXT_INC;
+                    end else if (stage == 9)
+                    begin
+                        ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_WZ; // address
+                        ctrl_word[REG_OUT_EN] = 1'b1;
+                        ctrl_word[MEM_MAR_WRITE_EN] = 1'b1;
+                    end else if (stage == 10)
+                    begin
+                        if (opcode[3] == 0)
+                        begin
+                            ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_H;
+                            ctrl_word[REG_OUT_EN] = 1'b1;
+                            ctrl_word[MEM_WRITE_EN] = 1'b1;
+                        end else
+                        begin
+                            ctrl_word[REG_READ_WRITE_BIT_4:REG_WRITE_SEL_BIT_0] = REG_H;
+                            ctrl_word[REG_WRITE_EN] = 1'b1;
+                            ctrl_word[MEM_OUT_EN] = 1'b1;
+                        end
+                    end else if (stage == 11)
+                    begin // access next address
+                        ctrl_word[REG_READ_WRITE_BIT_4:REG_WRITE_SEL_BIT_0] = REG_WZ;
+                        ctrl_word[REG_EXT_BIT_1:REG_EXT_BIT_0] = REG_EXT_INC;
+                    end else if (stage == 12)
+                    begin
+                        ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_WZ; // address
+                        ctrl_word[REG_OUT_EN] = 1'b1;
+                        ctrl_word[MEM_MAR_WRITE_EN] = 1'b1;
+                    end else if (stage == 13)
+                    begin
+                        if (opcode[3] == 0)
+                        begin
+                            ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_L;
+                            ctrl_word[REG_OUT_EN] = 1'b1;
+                            ctrl_word[MEM_WRITE_EN] = 1'b1;
+                        end else
+                        begin
+                            ctrl_word[REG_READ_WRITE_BIT_4:REG_WRITE_SEL_BIT_0] = REG_L;
+                            ctrl_word[REG_WRITE_EN] = 1'b1;
+                            ctrl_word[MEM_OUT_EN] = 1'b1;
+                        end
+
+                        stage_rst = 1'b1;
+                    end
+                end
+
                 default: 
             endcase
         end
     end
+
+    // stage reset logic
+    always @ (negedge clk, posedge rst)
+    begin
+        if (rst)
+            stage <= 0;
+        else
+        begin
+            if (stage_rst) 
+                stage <= 0;
+            else 
+                stage <= stage + 1;
+        end
+    end
+
+    assign out = ctrl_word;
 
 endmodule
