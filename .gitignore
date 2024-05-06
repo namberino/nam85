@@ -1,0 +1,4 @@
+.sconsign.dblite
+hardware.out
+top_design_tb.out
+top_design_tb.vcd
