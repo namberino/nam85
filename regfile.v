@@ -13,7 +13,7 @@ module regfile(
     localparam EXT_DCR = 2'b10;
     localparam EXT_INC2 = 2'b11;
 
-    reg[7:0] register[0:11];
+    reg[7:0] register[0:11]; // 12 registers
     reg[15:0] data_out;
 
     wire[3:0] write_reg = write_sel[3:0];
@@ -23,12 +23,12 @@ module regfile(
     wire read_ext = read_sel[4];
 
     // read operations
-    always @ (negedge clk)
+    always @ (*)
     begin
         if (read_ext)
             data_out <= {register[read_reg], register[read_reg + 1]};
         else
-            data_out[7:0] <= {8'b0, register[read_reg]};
+            data_out <= {8'b0, register[read_reg]};
     end
 
     // write operations

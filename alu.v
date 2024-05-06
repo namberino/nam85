@@ -1,14 +1,14 @@
 module alu(
     input clk,
     input rst,
-    input[4:0] opcode,
-    input[7:0] data_in,
     input ctrl_sig,
+    input flags_write_en,
     input acc_write_en,
     input act_store,
     input act_restore,
     input tmp_write_en,
-    input flags_write_en,
+    input[4:0] opcode,
+    input[7:0] data_in,
     output[7:0] flags_out,
     output[7:0] out
 );
@@ -53,9 +53,9 @@ module alu(
     reg[7:0] tmp;
     
     // flag handling
-    assign flag_z = (acc == 8'b0);
+    assign flag_z = (acc[7:0] == 8'b0);
     assign flag_c = (carry == 1'b1);
-    assign flag_p = ~^acc;
+    assign flag_p = ~^acc[7:0];
     assign flag_s = acc[7];
 
     always @ (negedge clk, posedge rst)

@@ -1,20 +1,17 @@
 module top_design_tb();
 
-    // reg clk = 0;
-    // integer i;
-    // initial begin
-    //     for (i = 0; i < 8096; i++)
-    //         #1 clk = ~clk;
-    // end
     reg clk = 0;
-    always #1 clk = ~clk;
+    integer i;
+    initial begin
+        for (i = 0; i < 8096; i++)
+            #1 clk = ~clk;
+    end
 
     reg rst; // reset signal
-    integer i;
 
     // display alu result
     reg[7:0] data_out;
-    always @ (posedge clk, posedge rst)
+    always @ (posedge clk_out, posedge rst)
     begin
         if (rst)
             data_out <= 8'b0;
@@ -26,7 +23,7 @@ module top_design_tb();
     reg[15:0] bus;
     always @ (*)
     begin
-        bus <= 16'b0;
+        bus = 16'b0;
 
         if (reg_out_en)
             bus = reg_out;
@@ -54,7 +51,7 @@ module top_design_tb();
         .clk(clk_out),
         .rst(rst),
         .write_en(ir_write_en),
-        .data(bus[7:0]),
+        .data_in(bus[7:0]),
         .out(ir_out)
     );
 
@@ -123,26 +120,26 @@ module top_design_tb();
         .opcode(ir_out),
         .flags(alu_flags_out),
         .out({
-            hlt,
-            ir_write_en,
-            mem_mar_write_en,
-            mem_write_en,
-            mem_out_en,
-            reg_write_en,
-            reg_out_en,
-            reg_read_sel,
-            reg_write_sel,
-            reg_ext_op,
-            alu_opcode,
-            alu_out_en,
-            alu_flags_write_en,
-            alu_flags_out_en,
-            alu_ctrl_sig,
-            alu_acc_write_en,
-            alu_tmp_write_en,
-            alu_act_store,
+            display,
             alu_act_restore,
-            display
+            alu_act_store,
+            alu_tmp_write_en,
+            alu_acc_write_en,
+            alu_ctrl_sig,
+            alu_flags_out_en,
+            alu_flags_write_en,
+            alu_out_en,
+            alu_opcode,
+            reg_ext_op,
+            reg_write_sel,
+            reg_read_sel,
+            reg_out_en,
+            reg_write_en,
+            mem_out_en,
+            mem_write_en,
+            mem_mar_write_en,
+            ir_write_en,
+            hlt
         })
     );
 

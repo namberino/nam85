@@ -88,7 +88,7 @@ module controller(
             ctrl_word[IR_WRITE_EN] = 1'b1;
         end else if (stage == 2)
         begin
-            ctrl_word[REG_READ_SEL_BIT_4:REG_READ_SEL_BIT_0] = REG_PC;
+            ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_PC;
             ctrl_word[REG_EXT_BIT_1:REG_EXT_BIT_0] = REG_EXT_INC;
         end else
         begin
@@ -493,8 +493,8 @@ module controller(
                     end else if (stage == 4)
                     begin
                         ctrl_word[MEM_OUT_EN] = 1'b1;
-                        ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_Z;
                         ctrl_word[REG_WRITE_EN] = 1'b1;
+                        ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_Z;
                     end else if (stage == 5)
                     begin
                         ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_PC;
@@ -507,8 +507,8 @@ module controller(
                     end else if (stage == 7)
                     begin
                         ctrl_word[MEM_OUT_EN] = 1'b1;
-                        ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_W;
                         ctrl_word[REG_WRITE_EN] = 1'b1;
+                        ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_W;
                     end else if (stage == 8)
                     begin
                         if (opcode[5:4] == 2'b11)

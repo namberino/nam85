@@ -2,7 +2,7 @@ module ir(
     input clk,
     input rst,
     input write_en,
-    input[7:0] data,
+    input[7:0] data_in,
     output[7:0] out
 );
 
@@ -13,7 +13,7 @@ module ir(
         if (rst)
             ir <= 8'b0;
         else if (write_en)
-            ir <= data;
+            ir <= data_in;
     end
 
     assign out = ir;
