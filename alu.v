@@ -9,7 +9,7 @@ module alu(
     input act_restore;
     input tmp_write_en;
     input flags_write_en;
-    output[3:0] flags_out;
+    output[7:0] flags_out;
     output[7:0] out
 );
 
