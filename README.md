@@ -4,6 +4,10 @@ This computer was based on the Intel 8080 ISA. Currently it can support most of 
 
 You can compile an 8080 program using an [online assembler](https://rk86.ru/i8080asm.html) and run it on this computer. Load up a program to [program.bin](program.bin), then simulate the computer using the gtkwave file.
 
+Simulation:
+
+![simulaiton waveform](sim.png)
+
 The toolchain: 
 - [GTKWave](https://gtkwave.sourceforge.net/)
 - [Icarus Verilog](https://github.com/steveicarus/iverilog)
