@@ -1,0 +1,30 @@
+name: verify
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3 # checkout source
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -U apio
+          sudo apt install -y gtkwave
+
+      - name: Install apio packages
+        run: apio install -a
+
+      - name: Run test file
+        run: |
+          chmod +x test.sh
+          ./test.sh
