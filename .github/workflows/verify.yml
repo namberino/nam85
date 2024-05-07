@@ -26,5 +26,5 @@ jobs:
 
       - name: Run test file
         run: |
-          chmod +x test.sh
-          ./test.sh
+          chmod +x test/test.sh
+          ./test/test.sh
