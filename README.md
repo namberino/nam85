@@ -13,6 +13,7 @@ You can compile an 8080 program using an [online assembler](https://rk86.ru/i808
 Check out [doc.md](doc/doc.md) to about how the computer works and how each instructions were implemented
 
 ## Toolchain
+- [Apio](https://github.com/FPGAwars/apio)
 - [GTKWave](https://gtkwave.sourceforge.net/)
 - [Icarus Verilog](https://github.com/steveicarus/iverilog)
 - [Intel 8080 assembler](https://rk86.ru/i8080asm.html)
