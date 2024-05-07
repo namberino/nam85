@@ -6,7 +6,11 @@ You can compile an 8080 program using an [online assembler](https://rk86.ru/i808
 
 ## Simulation
 
-![simulaiton waveform](sim.png)
+![simulaiton waveform](img/sim.png)
+
+## Documentation
+
+Check out [doc.md](doc/doc.md) to about how the computer works and how each instructions were implemented
 
 ## Toolchain
 - [GTKWave](https://gtkwave.sourceforge.net/)

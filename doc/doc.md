@@ -1,7 +1,7 @@
 # Architecture
 - This is a 16-bit computer implemented in FPGA
 
-![architecture](architecture.png)
+![architecture](../img/architecture.png)
 
 # Clock module
 - Takes a clock signal and a halt signal. Output 0 if halt signal is high, else output clock signal
@@ -309,10 +309,10 @@
 | HLT          | 76     | 1     | ----  | 4        | Halt execution                       |
 
 Table (Hex representation):
-![opcode table](opcodes-table.png)
+![opcode table](../img/opcodes-table.png)
 
 Table (Octal representation):
-![opcode table octal](opcodes-table-octal.png)
+![opcode table octal](../img/opcodes-table-octal.png)
 
 # Instruction decoding
 - Control signal will be asserted through a 33-bit control word
