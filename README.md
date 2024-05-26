@@ -1,4 +1,4 @@
-# nam80: An 8-bit computer based on the Intel 8085 ISA
+# nam85: An 8-bit computer based on the Intel 8085 ISA
 
 This computer was based on the Intel 8085 ISA. Currently it can support most of the 8085 instructions.
 
@@ -16,7 +16,7 @@ Check out [doc.md](doc/doc.md) to about how the computer works and how each inst
 - [Apio](https://github.com/FPGAwars/apio)
 - [GTKWave](https://gtkwave.sourceforge.net/)
 - [Icarus Verilog](https://github.com/steveicarus/iverilog)
-- [Intel 8080 assembler](https://rk86.ru/i8080asm.html)
+- [Intel 8085 assembler](https://web8085.appspot.com/)
 
 ## References
 - [Digital Computer Electronics](https://www.amazon.com/Digital-Computer-Electronics-Jerald-Malvino-dp-0074622358/dp/0074622358/ref=dp_ob_title_bk)
