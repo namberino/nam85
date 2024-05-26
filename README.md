@@ -1,8 +1,8 @@
-# nam80: An 8-bit computer based on the Intel 8080 ISA
+# nam80: An 8-bit computer based on the Intel 8085 ISA
 
-This computer was based on the Intel 8080 ISA. Currently it can support most of the 8080 instructions.
+This computer was based on the Intel 8085 ISA. Currently it can support most of the 8085 instructions.
 
-You can compile an 8080 program using an [online assembler](https://rk86.ru/i8080asm.html) and run it on this computer. Load up a program to [program.bin](program.bin), then simulate the computer using the gtkwave file.
+You can compile an 8085 program using an [8085 assembler](https://github.com/namberino/namssembler) and run it on this computer. Load up a program to [program.bin](program.bin), then simulate the computer using the gtkwave file.
 
 ## Simulation
 
