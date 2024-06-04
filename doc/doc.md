@@ -18,19 +18,19 @@ This is a detailed documentation on how the nam85 works.
 - [Later stages of different instructions](#later-stages-of-different-instructions)
   - [MOV destination register, source register](#mov-destination-register-source-register)
   - [MVI destination register, data byte](#mvi-destination-register-data-byte)
-  - [Increment and Decrement](#increment-and-decrement)
-  - [Increment and Decrement (16-bit)](#increment-and-decrement-16-bit)
   - [Arithmetic and logic instructions](#arithmetic-and-logic-instructions)
   - [Other ALU operations](#other-alu-operations)
   - [ALU immediate operation](#alu-immediate-operation)
+  - [Increment and Decrement](#increment-and-decrement)
+  - [Increment and Decrement (16-bit)](#increment-and-decrement-16-bit)
   - [Load and Store](#load-and-store)
   - [Extended load immediate / Double add](#extended-load-immediate--double-add)
+  - [Push and Pop](#push-and-pop)
+  - [SHLD / LHLD instructions](#shld--lhld-instructions)
   - [JUMP instruction](#jump-instruction)
   - [CALL instruction](#call-instruction)
   - [RET instruction](#ret-instruction)
   - [Conditional jump, conditional call, conditional return](#conditional-jump-conditional-call-conditional-return)
-  - [Push and Pop](#push-and-pop)
-  - [SHLD / LHLD instructions](#shld--lhld-instructions)
   - [NOP instruction](#nop-instruction)
   - [HLT instruction](#hlt-instruction)
   - [OUT instruction](#out-instruction)
@@ -224,86 +224,6 @@ Table (Octal representation):
 		- Assert extended increment
 		- Assert stage reset
 
-## Increment and Decrement
-- 1 byte
-- Middle 3 bits are the source register opcode
-- The LSB will indicate whether it's in increment or decrement mode (0 is INR, 1 is DCR)
-
-- Stages for the `INR M` / `DCR M` instruction:
-	- Stage 3 (Access memory at location HL):
-		- Access value of HL (get address)
-		- Assert register output enable
-		- Assert MAR write enable
-	- Stage 4 (Get data from memory at location HL):
-		- Assert memory output enable (get data from location HL)
-		- Assert ACT store signal
-		- Assert ACC write enable signal
-	- Stage 5 (Determine whether to increment or decrement):
-		- Assert ALU control signal
-		- Pass the increment / decrement opcode (`1000` + LSB of current instruction) into the ALU opcode input path
-	- Stage 6 (Output ALU result):
-		- Assert ALU output enable
-		- Assert ACT restore signal
-		- Assert memory write enable
-		- Assert stage reset
-
-- Stages for the `INR` / `DCR` for the other registers:
-	- Stage 3 (Bring register data into the ALU):
-		- If ACC:
-			- Assert ALU control signal
-			- Pass the increment / decrement opcode (`1000` + LSB of current instruction) into the ALU opcode input path
-			- Assert stage reset
-		- Else:
-			- Access source register 
-			- Assert register output enable
-			- Assert ACT store signal
-			- Assert ACC write enable
-	- Stage 4 (Assert ALU control signal and pass opcode into ALU):
-		- Assert ALU control signal
-		- Pass the increment / decrement opcode (`1000` + LSB of current instruction) into the ALU opcode input path
-	- Stage 5 (Output ALU result):
-		- Assert ALU output enable
-		- Assert ACT restore signal
-		- Access the source register
-		- Assert register write enable
-		- Assert stage reset
-
-## Increment and Decrement (16-bit)
-- 1 byte
-- Can only access B, D, H and SP registers
-- Middle 2 bits (bit 5:4 in Verilog) are the destination register opcode
-- The 3rd bit will decide whether the operation will be increment or decrement
-- This will operate in the register file module
-- Layout of `INX` / `DCX`:
-```
-INX B: 03 (0000_0011)
-DCX B: 0B (0000_1011)
-
-INX D: 13 (0001_0011)
-DCX D: 1B (0001_1011)
-
-INX H: 23 (0010_0011)
-DCX H: 2B (0010_1011)
-
-INX SP: 33 (0011_0011)
-DCX SP: 3B (0011_1011)
-```
-- Opcode for registers (5:4 bits in Verilog):
-
-| Register | Opcode |
-| -------- | ------ |
-| B        | 00     |
-| D        | 01     |
-| H        | 10     |
-| SP       | 11     |
-
-- Stages for `INX` / `DCX`:
-	- Stage 3: 
-		- If register opcode is 11 (SP), access SP (because SP's opcode has a different middle 2 bit compared to B, D and H - special case)
-		- Else, create register file 5-bit read select signal: bit 10 + opcode of register + bit 0 (example: 10100 will access HL in extended mode - MSB indicates extended mode)
-		- Create extended operation signal based on the 3rd bit of the register opcode (0 means increment, 1 means decrement)
-		- Assert stage reset
-
 ## Arithmetic and logic instructions
 - ADD, ADC, SUB, SBB, ANA, XRA, ORA, CMP
 - 1 byte
@@ -389,6 +309,86 @@ DCX SP: 3B (0011_1011)
 		- Assert 5-bit ALU operation signal (since we're only doing the arithmetic and logic instructions, the first 2 bits will be 0. The last 3 bits are the middle 3 bits from opcode)
 		- Access register PC (for incrementing)
 		- Assert extended increment (for incrementing PC to next instruction)
+		- Assert stage reset
+
+## Increment and Decrement
+- 1 byte
+- Middle 3 bits are the source register opcode
+- The LSB will indicate whether it's in increment or decrement mode (0 is INR, 1 is DCR)
+
+- Stages for the `INR M` / `DCR M` instruction:
+	- Stage 3 (Access memory at location HL):
+		- Access value of HL (get address)
+		- Assert register output enable
+		- Assert MAR write enable
+	- Stage 4 (Get data from memory at location HL):
+		- Assert memory output enable (get data from location HL)
+		- Assert ACT store signal
+		- Assert ACC write enable signal
+	- Stage 5 (Determine whether to increment or decrement):
+		- Assert ALU control signal
+		- Pass the increment / decrement opcode (`1000` + LSB of current instruction) into the ALU opcode input path
+	- Stage 6 (Output ALU result):
+		- Assert ALU output enable
+		- Assert ACT restore signal
+		- Assert memory write enable
+		- Assert stage reset
+
+- Stages for the `INR` / `DCR` for the other registers:
+	- Stage 3 (Bring register data into the ALU):
+		- If ACC:
+			- Assert ALU control signal
+			- Pass the increment / decrement opcode (`1000` + LSB of current instruction) into the ALU opcode input path
+			- Assert stage reset
+		- Else:
+			- Access source register 
+			- Assert register output enable
+			- Assert ACT store signal
+			- Assert ACC write enable
+	- Stage 4 (Assert ALU control signal and pass opcode into ALU):
+		- Assert ALU control signal
+		- Pass the increment / decrement opcode (`1000` + LSB of current instruction) into the ALU opcode input path
+	- Stage 5 (Output ALU result):
+		- Assert ALU output enable
+		- Assert ACT restore signal
+		- Access the source register
+		- Assert register write enable
+		- Assert stage reset
+
+## Increment and Decrement (16-bit)
+- 1 byte
+- Can only access B, D, H and SP registers
+- Middle 2 bits (bit 5:4 in Verilog) are the destination register opcode
+- The 3rd bit will decide whether the operation will be increment or decrement
+- This will operate in the register file module
+- Layout of `INX` / `DCX`:
+```
+INX B: 03 (0000_0011)
+DCX B: 0B (0000_1011)
+
+INX D: 13 (0001_0011)
+DCX D: 1B (0001_1011)
+
+INX H: 23 (0010_0011)
+DCX H: 2B (0010_1011)
+
+INX SP: 33 (0011_0011)
+DCX SP: 3B (0011_1011)
+```
+- Opcode for registers (5:4 bits in Verilog):
+
+| Register | Opcode |
+| -------- | ------ |
+| B        | 00     |
+| D        | 01     |
+| H        | 10     |
+| SP       | 11     |
+
+- Stages for `INX` / `DCX`:
+	- Stage 3: 
+		- If register opcode is 11 (SP), access SP (because SP's opcode has a different middle 2 bit compared to B, D and H - special case)
+		- Else, create register file 5-bit read select signal: bit 10 + opcode of register + bit 0 (example: 10100 will access HL in extended mode - MSB indicates extended mode)
+		- Create extended operation signal based on the 3rd bit of the register opcode (0 means increment, 1 means decrement)
 		- Assert stage reset
 
 ## Load and Store 
@@ -554,6 +554,151 @@ DCX SP: 3B (0011_1011)
 		- Assert write enable
 		- Access register WZ in read mode
 		- Assert output enable
+		- Assert stage reset
+
+## Push and Pop
+- 1 byte
+- Can use 4 registers: B, D, H, PSW
+- PSW means push or pop the ACC and the flags in the stack
+- First 3 bits ([2:0]) determines whether to use `POP` or `PUSH`
+- Bits 5:4 determine the register to use
+- Opcode for first 3 bits:
+
+| Operation | Opcode |
+| --------- | ------ |
+| POP       | 001    |
+| PUSH      | 101    |
+
+- Opcode for register:
+
+| Register | Opcode |
+| -------- | ------ |
+| B        | 00     |
+| D        | 01     |
+| H        | 10     |
+| PSW      | 11     |
+
+- Stages of `PUSH`:
+	- Stage 3 (Make space on the SP):
+		- Access register SP
+		- Assert extended decrement
+	- Stage 4 (Access SP on memory):
+		- Access register SP
+		- Assert register output enable
+		- Assert MAR write enable
+	- Stage 5 (Get and put ACC or 2nd byte of register value on the stack):
+		- If PSW:
+			- Assert ALU output enable
+		- Else:
+			- Assert 5-bit register select signal (first 2 bit is 0, then the 5:4 bits, then a final 0 bit)
+			- Assert register output enable
+		- Assert memory write enable
+	- Stage 6 (Decrement SP to make space for the flags):
+		- Access register SP
+		- Assert extended decrement
+	- Stage 7 (Access SP on memory):
+		- Access register SP
+		- Assert register output enable
+		- Assert MAR write enable
+	- Stage 8 (Get and put flags or 1st byte of register value on the stack):
+		- If PSW:
+			- Assert ALU flags output enable
+		- Else:
+			- Assert 5-bit register select signal (first 2 bit is 0, then the 5:4 bits, then a final 1 bit)
+			- Assert register output enable
+		- Assert memory write enable
+		- Assert stage reset
+
+- Stages of `POP`:
+	- Stage 3 (Access memory at SP to get data stored on the stack):
+		- Access register SP
+		- Assert register output enable
+		- Assert MAR write enable
+	- Stage 4 (Get and output flags or 1st byte of register value from stack to register):
+		- If PSW:
+			- Assert ALU flags write enable
+		- Else:
+			- Assert 5-bit register select signal (first 2 bit is 0, then the 5:4 bits, then a final 1 bit)
+			- Assert register write enable
+		- Assert memory output enable
+	- Stage 5 (Move to next value in stack):
+		- Access register SP
+		- Assert extended increment
+	- Stage 6 (Access memory at SP to get data stored on the stack):
+		- Access register SP
+		- Assert register output enable
+		- Assert MAR write enable
+	- Stage 7 (Get and output ACC or 2nd byte of register value from stack to register):
+		- If PSW:
+			- Assert ACC write enable
+		- Else:
+			- Assert 5-bit register select signal (first 2 bit is 0, then the 5:4 bits, then a final 0 bit)
+			- Assert register write enable
+		- Assert memory output enable
+	- Stage 8 (Clear popped data in stack):
+		- Access register SP
+		- Assert extended increment
+		- Assert stage reset
+
+## SHLD / LHLD instructions
+- 3 bytes
+- Store / Load H and L direct
+- SHLD stores H and L at specified address
+- LHLD loads H and L with value at specified address
+- The 4th byte of the opcode (3rd index) determines which instruction to use (0 means SHLD, 1 means LHLD)
+
+- Stages:
+	- Stage 3 (Get address of 1st byte of address):
+		- Access register PC
+		- Assert register output enable
+		- Assert MAR write enable
+	- Stage 4 (Store 1st byte of address):
+		- Access register Z
+		- Assert memory output enable
+		- Assert register write enable
+	- Stage 5 (Move to 2nd byte of address):
+		- Access register PC
+		- Assert extended increment
+	- Stage 6 (Get address of 2nd byte of address):
+		- Access register PC
+		- Assert register output enable
+		- Assert MAR write enable
+	- Stage 7 (Store 2nd byte of address):
+		- Access register W
+		- Assert memory output enable
+		- Assert register write enable
+	- Stage 8 (Move PC to next instruction):
+		- Access register PC
+		- Assert extended increment
+	- Stage 9 (Get data of the address stored in WZ):
+		- Access register WZ
+		- Assert register output enable
+		- Assert MAR write enable
+	- Stage 10 (Check which instruction to use):
+		- If SHLD:
+			- Access register H
+			- Assert register output enable
+			- Assert memory write enable
+		- If LHLD:
+			- Access register H
+			- Assert register write enable
+			- Assert memory output enable
+	- Stage 11 (Move to next byte which is stored at WZ + 1):
+		- Access register WZ
+		- Assert extended increment
+	- Stage 12 (Get data of the new address stored in WZ):
+		- Access register WZ
+		- Assert register output enable
+		- Assert MAR write enable
+	- Stage 13 (Check which instruction to use):
+		- If SHLD:
+			- Access register L
+			- Assert register output enable
+			- Assert memory write enable
+		- If LHLD:
+			- Access register L
+			- Assert register write enable
+			- Assert memory output enable
 		- Assert stage reset
 
 ## JUMP instruction
@@ -824,151 +969,6 @@ DCX SP: 3B (0011_1011)
 		- Assert register output enable
 		- Access register PC in write mode
 		- Assert register write enable
-		- Assert stage reset
-
-## Push and Pop
-- 1 byte
-- Can use 4 registers: B, D, H, PSW
-- PSW means push or pop the ACC and the flags in the stack
-- First 3 bits ([2:0]) determines whether to use `POP` or `PUSH`
-- Bits 5:4 determine the register to use
-- Opcode for first 3 bits:
-
-| Operation | Opcode |
-| --------- | ------ |
-| POP       | 001    |
-| PUSH      | 101    |
-
-- Opcode for register:
-
-| Register | Opcode |
-| -------- | ------ |
-| B        | 00     |
-| D        | 01     |
-| H        | 10     |
-| PSW      | 11     |
-
-- Stages of `PUSH`:
-	- Stage 3 (Make space on the SP):
-		- Access register SP
-		- Assert extended decrement
-	- Stage 4 (Access SP on memory):
-		- Access register SP
-		- Assert register output enable
-		- Assert MAR write enable
-	- Stage 5 (Get and put ACC or 2nd byte of register value on the stack):
-		- If PSW:
-			- Assert ALU output enable
-		- Else:
-			- Assert 5-bit register select signal (first 2 bit is 0, then the 5:4 bits, then a final 0 bit)
-			- Assert register output enable
-		- Assert memory write enable
-	- Stage 6 (Decrement SP to make space for the flags):
-		- Access register SP
-		- Assert extended decrement
-	- Stage 7 (Access SP on memory):
-		- Access register SP
-		- Assert register output enable
-		- Assert MAR write enable
-	- Stage 8 (Get and put flags or 1st byte of register value on the stack):
-		- If PSW:
-			- Assert ALU flags output enable
-		- Else:
-			- Assert 5-bit register select signal (first 2 bit is 0, then the 5:4 bits, then a final 1 bit)
-			- Assert register output enable
-		- Assert memory write enable
-		- Assert stage reset
-
-- Stages of `POP`:
-	- Stage 3 (Access memory at SP to get data stored on the stack):
-		- Access register SP
-		- Assert register output enable
-		- Assert MAR write enable
-	- Stage 4 (Get and output flags or 1st byte of register value from stack to register):
-		- If PSW:
-			- Assert ALU flags write enable
-		- Else:
-			- Assert 5-bit register select signal (first 2 bit is 0, then the 5:4 bits, then a final 1 bit)
-			- Assert register write enable
-		- Assert memory output enable
-	- Stage 5 (Move to next value in stack):
-		- Access register SP
-		- Assert extended increment
-	- Stage 6 (Access memory at SP to get data stored on the stack):
-		- Access register SP
-		- Assert register output enable
-		- Assert MAR write enable
-	- Stage 7 (Get and output ACC or 2nd byte of register value from stack to register):
-		- If PSW:
-			- Assert ACC write enable
-		- Else:
-			- Assert 5-bit register select signal (first 2 bit is 0, then the 5:4 bits, then a final 0 bit)
-			- Assert register write enable
-		- Assert memory output enable
-	- Stage 8 (Clear popped data in stack):
-		- Access register SP
-		- Assert extended increment
-		- Assert stage reset
-
-## SHLD / LHLD instructions
-- 3 bytes
-- Store / Load H and L direct
-- SHLD stores H and L at specified address
-- LHLD loads H and L with value at specified address
-- The 4th byte of the opcode (3rd index) determines which instruction to use (0 means SHLD, 1 means LHLD)
-
-- Stages:
-	- Stage 3 (Get address of 1st byte of address):
-		- Access register PC
-		- Assert register output enable
-		- Assert MAR write enable
-	- Stage 4 (Store 1st byte of address):
-		- Access register Z
-		- Assert memory output enable
-		- Assert register write enable
-	- Stage 5 (Move to 2nd byte of address):
-		- Access register PC
-		- Assert extended increment
-	- Stage 6 (Get address of 2nd byte of address):
-		- Access register PC
-		- Assert register output enable
-		- Assert MAR write enable
-	- Stage 7 (Store 2nd byte of address):
-		- Access register W
-		- Assert memory output enable
-		- Assert register write enable
-	- Stage 8 (Move PC to next instruction):
-		- Access register PC
-		- Assert extended increment
-	- Stage 9 (Get data of the address stored in WZ):
-		- Access register WZ
-		- Assert register output enable
-		- Assert MAR write enable
-	- Stage 10 (Check which instruction to use):
-		- If SHLD:
-			- Access register H
-			- Assert register output enable
-			- Assert memory write enable
-		- If LHLD:
-			- Access register H
-			- Assert register write enable
-			- Assert memory output enable
-	- Stage 11 (Move to next byte which is stored at WZ + 1):
-		- Access register WZ
-		- Assert extended increment
-	- Stage 12 (Get data of the new address stored in WZ):
-		- Access register WZ
-		- Assert register output enable
-		- Assert MAR write enable
-	- Stage 13 (Check which instruction to use):
-		- If SHLD:
-			- Access register L
-			- Assert register output enable
-			- Assert memory write enable
-		- If LHLD:
-			- Access register L
-			- Assert register write enable
-			- Assert memory output enable
 		- Assert stage reset
 
 ## NOP instruction
