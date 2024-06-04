@@ -9,7 +9,7 @@ module top_design_tb();
 
     reg rst; // reset signal
 
-    reg output_alu;
+    wire output_alu;
 
     // output_alu alu result
     reg[7:0] data_out;

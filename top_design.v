@@ -4,7 +4,7 @@ module top_design(
 
     wire rst; // reset signal
 
-    reg output_alu;
+    wire output_alu;
 
     // display alu result
     reg[7:0] data_out;
