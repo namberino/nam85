@@ -1,5 +1,43 @@
+# nam85 documentation
+
+This is a detailed documentation on how the nam85 works.
+
+# Table of content
+
+- [nam85 documentation](#nam85-documentation)
+- [Table of content](#table-of-content)
+- [Architecture](#architecture)
+- [Clock module](#clock-module)
+- [Bus](#bus)
+- [Instruction register](#instruction-register)
+- [Register file](#register-file)
+- [ALU](#alu)
+- [Memory (64K)](#memory-64k)
+- [Instruction set](#instruction-set)
+- [Instruction decoding](#instruction-decoding)
+- [Later stages of different instructions](#later-stages-of-different-instructions)
+  - [MOV destination register, source register](#mov-destination-register-source-register)
+  - [MVI destination register, data byte](#mvi-destination-register-data-byte)
+  - [Increment and Decrement](#increment-and-decrement)
+  - [Increment and Decrement (16-bit)](#increment-and-decrement-16-bit)
+  - [Arithmetic and logic instructions](#arithmetic-and-logic-instructions)
+  - [Other ALU operations](#other-alu-operations)
+  - [ALU immediate operation](#alu-immediate-operation)
+  - [Load and Store](#load-and-store)
+  - [Extended load immediate / Double add](#extended-load-immediate--double-add)
+  - [JUMP instruction](#jump-instruction)
+  - [CALL instruction](#call-instruction)
+  - [RET instruction](#ret-instruction)
+  - [Conditional jump, conditional call, conditional return](#conditional-jump-conditional-call-conditional-return)
+  - [Push and Pop](#push-and-pop)
+  - [SHLD / LHLD instructions](#shld--lhld-instructions)
+  - [NOP instruction](#nop-instruction)
+  - [HLT instruction](#hlt-instruction)
+  - [OUT instruction](#out-instruction)
+- [Sample 8080 program](#sample-8080-program)
+
 # Architecture
-- This is a 16-bit computer implemented in FPGA
+- This is an 8-bit computer implemented in FPGA
 
 ![architecture](../img/architecture.png)
 
@@ -353,7 +391,7 @@ DCX SP: 3B (0011_1011)
 		- Assert extended increment (for incrementing PC to next instruction)
 		- Assert stage reset
 
-## Load  and Store 
+## Load and Store 
 - Load and store X will only operate on B and D (Store content of ACC into address BC or DE / Load content of BC or DE into ACC)
 - Load and store will take in a 16-bit address (Store content of ACC into address / Load content of address into ACC)
 - 3rd bit in opcode will determine load or store (0 is store, 1 is load)
