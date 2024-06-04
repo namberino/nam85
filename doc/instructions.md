@@ -1,8 +1,8 @@
 # Instructions table
 
-These are all the instructions supported by the nam85.
+These are all the instructions supported by the nam85. This table contains the description, how long the instruction takes to execute, how many bytes does it take up, what flag it should affect and the opcode of each instructions.
 
-| Instruction  | Opcode | Bytes | Flags | T States | Description                          |
+| Instruction  | Opcode | Bytes | Flags | Cycles | Description                          |
 | ------------ | ------ | ----- | ----- | -------- | ------------------------------------ |
 | INR A        | 3C     | 1     | Z-SP  | 4        | A = A + 1                            |
 | INR B        | 04     | 1     | Z-SP  | 6        | B = B + 1                            |
