@@ -1,0 +1,3 @@
+[submodule "namssembler"]
+	path = namssembler
+	url = git@github.com:namberino/namssembler.git
