@@ -19,7 +19,6 @@ Check out [doc.md](doc/doc.md) to about how the computer works and how each inst
 - [Intel 8085 assembler](https://web8085.appspot.com/)
 
 ## References
-- [Digital Computer Electronics](https://www.amazon.com/Digital-Computer-Electronics-Jerald-Malvino-dp-0074622358/dp/0074622358/ref=dp_ob_title_bk)
 - [Intel 8080/8085 opcode table - octal version](https://tobiasvl.github.io/optable//intel-8080/octal)
 - [Intel 8080 assembly programming manual](https://altairclone.com/downloads/manuals/8080%20Programmers%20Manual.pdf)
 - [Intel 8080 opcode table](https://pastraiser.com/cpu/i8080/i8080_opcodes.html)

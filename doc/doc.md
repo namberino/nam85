@@ -16,6 +16,9 @@ This is a detailed documentation on how the nam85 works.
 - [Instruction set](#instruction-set)
 - [Instruction decoding](#instruction-decoding)
 - [Later stages of different instructions](#later-stages-of-different-instructions)
+  - [NOP instruction](#nop-instruction)
+  - [HLT instruction](#hlt-instruction)
+  - [OUT instruction](#out-instruction)
   - [MOV destination register, source register](#mov-destination-register-source-register)
   - [MVI destination register, data byte](#mvi-destination-register-data-byte)
   - [Arithmetic and logic instructions](#arithmetic-and-logic-instructions)
@@ -31,9 +34,6 @@ This is a detailed documentation on how the nam85 works.
   - [CALL instruction](#call-instruction)
   - [RET instruction](#ret-instruction)
   - [Conditional jump, conditional call, conditional return](#conditional-jump-conditional-call-conditional-return)
-  - [NOP instruction](#nop-instruction)
-  - [HLT instruction](#hlt-instruction)
-  - [OUT instruction](#out-instruction)
 
 # Architecture
 - This is an 8-bit computer implemented in FPGA
@@ -143,6 +143,30 @@ Table (Octal representation):
 		- Increment value in PC register (Extended increment)
 
 # Later stages of different instructions
+
+## NOP instruction
+- 1 byte
+- Assert stage reset (No extra stages)
+
+## HLT instruction
+- 1 byte
+- Halt program execution
+
+- Stages:
+	- Stage 3:
+		- Assert halt signal
+
+## OUT instruction
+- 1 byte
+- Outputs ACC value
+
+- Stages:
+	- Stage 3:
+		- Access register PC
+		- Assert extended increment
+		- Assert output ALU signal
+		- Assert stage reset
+
 ## MOV destination register, source register
 - 1 byte
 - The first 6 bits are for the destination and source registers
@@ -968,27 +992,4 @@ DCX SP: 3B (0011_1011)
 		- Assert register output enable
 		- Access register PC in write mode
 		- Assert register write enable
-		- Assert stage reset
-
-## NOP instruction
-- 1 byte
-- Assert stage reset (No extra stages)
-
-## HLT instruction
-- 1 byte
-- Halt program execution
-
-- Stages:
-	- Stage 3:
-		- Assert halt signal
-
-## OUT instruction
-- 1 byte
-- Outputs ACC value
-
-- Stages:
-	- Stage 3:
-		- Access register PC
-		- Assert extended increment
-		- Assert display signal
 		- Assert stage reset

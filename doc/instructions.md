@@ -2,7 +2,7 @@
 
 These are all the instructions supported by the nam85. This table contains the description, how long the instruction takes to execute, how many bytes does it take up, what flag it should affect and the opcode of each instructions.
 
-| Instruction  | Opcode | Bytes | Flags | Cycles | Description                          |
+| Instruction  | Opcode | Bytes | Flags | Cycles   | Description                          |
 | ------------ | ------ | ----- | ----- | -------- | ------------------------------------ |
 | INR A        | 3C     | 1     | Z-SP  | 4        | A = A + 1                            |
 | INR B        | 04     | 1     | Z-SP  | 6        | B = B + 1                            |
@@ -231,3 +231,4 @@ These are all the instructions supported by the nam85. This table contains the d
 | JC address   | DA     | 3     | ----  | 4/9      | Jump to *address* if C == 1          |
 | NOP          | 00     | 1     | ----  | 4        | Do nothing                           |
 | HLT          | 76     | 1     | ----  | 4        | Halt execution                       |
+| OUT          | D3     | 1     | ----  | 4        | Output ALU result                    |

@@ -39,7 +39,7 @@ module controller(
     localparam ALU_ACT_STORE = 30;
     localparam ALU_ACT_RESTORE = 31;
 
-    localparam DISPLAY = 32;
+    localparam OUTPUT_ALU = 32;
 
     // register extended operations
     localparam REG_EXT_INC = 2'b01;
@@ -113,7 +113,7 @@ module controller(
                     begin
                         ctrl_word[REG_WRITE_SEL_BIT_4:REG_WRITE_SEL_BIT_0] = REG_PC;
                         ctrl_word[REG_EXT_BIT_1:REG_EXT_BIT_0] = REG_EXT_INC;
-                        ctrl_word[DISPLAY] = 1'b1;
+                        ctrl_word[OUTPUT_ALU] = 1'b1;
                         stage_rst = 1'b1;
                     end
                 end

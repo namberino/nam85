@@ -9,13 +9,15 @@ module top_design_tb();
 
     reg rst; // reset signal
 
-    // display alu result
+    reg output_alu;
+
+    // output_alu alu result
     reg[7:0] data_out;
     always @ (posedge clk_out, posedge rst)
     begin
         if (rst)
             data_out <= 8'b0;
-        else if (display)
+        else if (output_alu)
             data_out <= alu_out;
     end
 
@@ -120,7 +122,7 @@ module top_design_tb();
         .opcode(ir_out),
         .flags(alu_flags_out),
         .out({
-            display,
+            output_alu,
             alu_act_restore,
             alu_act_store,
             alu_tmp_write_en,
