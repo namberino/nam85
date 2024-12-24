@@ -1,0 +1,30 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Tue Jun  4 13:06:15 2024
+[*]
+[dumpfile] "uart_tx_tb.vcd"
+[dumpfile_mtime] "Tue Jun  4 13:05:34 2024"
+[dumpfile_size] 3205
+[savefile] "uart_tx_tb.gtkw"
+[timestart] 1
+[size] 1288 600
+[pos] -1 -1
+*-4.776577 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[treeopen] uart_tx_tb.
+[sst_width] 253
+[signals_width] 161
+[sst_expanded] 1
+[sst_vpaned_height] 159
+@28
+uart_tx_tb.clk
+uart_tx_tb.rst
+uart_tx_tb.tx_data[7:0]
+uart_tx_tb.tx_enable
+uart_tx_tb.tx_busy
+uart_tx_tb.tx_out_bit
+@22
+uart_tx_tb.tx.state[3:0]
+@23
+uart_tx_tb.tx.bit_counter[3:0]
+[pattern_trace] 1
+[pattern_trace] 0

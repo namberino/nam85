@@ -1,0 +1,54 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Tue Jun  4 13:51:18 2024
+[*]
+[dumpfile] "uart_rx_tb.vcd"
+[dumpfile_mtime] "Tue Jun  4 13:51:05 2024"
+[dumpfile_size] 3317
+[savefile] "uart_rx_tb.gtkw"
+[timestart] 0
+[size] 1288 600
+[pos] -1 -1
+*-2.410966 16 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] uart_rx_tb.
+[sst_width] 253
+[signals_width] 185
+[sst_expanded] 1
+[sst_vpaned_height] 159
+@28
+uart_rx_tb.clk
+uart_rx_tb.rst
+uart_rx_tb.rx_bit_in
+uart_rx_tb.rx_data[7:0]
+uart_rx_tb.rx_received
+uart_rx_tb.rx.received_byte
+@22
+uart_rx_tb.rx.bit_counter[3:0]
+[pattern_trace] 1
+[pattern_trace] 0
